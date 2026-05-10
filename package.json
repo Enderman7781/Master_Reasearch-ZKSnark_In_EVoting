@@ -1,6 +1,25 @@
 {
   "description": "",
   "dependencies": {
-    "circomlib": "^2.0.5"
-  }
+    "circomlib": "^2.0.5",
+    "circomlibjs": "^0.1.7"
+  },
+  "name": "master_reasearch-zksnark_in_evoting",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Enderman7781/Master_Reasearch-ZKSnark_In_EVoting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Enderman7781/Master_Reasearch-ZKSnark_In_EVoting/issues"
+  },
+  "homepage": "https://github.com/Enderman7781/Master_Reasearch-ZKSnark_In_EVoting#readme"
 }
