@@ -17,7 +17,8 @@ from poseidon_py.poseidon_hash import poseidon_hash
 FILE_PATH = {
     'csv': './voters.csv',
     'commitment': './commitment.js',
-    'vkey' : './verification_key.json'
+    'vkey_no_merkle' : './vkey_no_merkle.json',
+    'vkey_merkle' : './vkey_merkle.json',
 } 
 
 class Election:
