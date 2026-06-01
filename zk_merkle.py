@@ -3,6 +3,8 @@ import json
 import math
 import tempfile
 import subprocess
+
+import requests
 from zk_normal import User, Election, Ballot, FILE_PATH
 
 
@@ -90,7 +92,6 @@ class ZKMerkleVotingSystem:
         return True
 
     def generateVoteProof(self, voter, secret: str, merkle_path: dict, root: str, depth: int) -> dict:
-        witness_gen_path, wasm_path, zkey_path, _ = self._get_paths(depth)
         voter_id_int = str(int(voter.hashId, 16))
         secret_int = str(int(secret, 16))
 
@@ -102,30 +103,31 @@ class ZKMerkleVotingSystem:
             "path_indices": merkle_path["path_indices"]
         }
 
-        with open("input.json", "w") as f:
-            json.dump(input_data, f)
+        payload = {
+            "input": input_data,
+            "depth": depth
+        }
+
+        api_url = "http://localhost:3000/api/prove/merkle"
 
         try:
-            # 動態調用對應深度的 .wasm 和 .zkey
-            cmd_witness = f"node {witness_gen_path} {wasm_path} input.json witness.wtns"
-            subprocess.run(cmd_witness, shell=True,
-                           check=True, capture_output=True)
+            # Send HTTP POST request to the local Node.js proving server
+            response = requests.post(api_url, json=payload)
+            response.raise_for_status() 
+            
+            result = response.json()
+            
+            if result.get("success"):
+                return {
+                    "proof": result["proof"],
+                    "public_signals": result["publicSignals"]
+                }
+            else:
+                raise Exception(f"Server returned failure: {result.get('error')}")
 
-            cmd_prove = f"snarkjs groth16 prove {zkey_path} witness.wtns proof.json public.json"
-            subprocess.run(cmd_prove, shell=True,
-                           check=True, capture_output=True)
-
-            with open("proof.json", "r") as f:
-                real_proof = json.load(f)
-            with open("public.json", "r") as f:
-                real_public_signals = json.load(f)
-
-            os.remove("input.json")
-            os.remove("witness.wtns")
-            return {"proof": real_proof, "public_signals": real_public_signals}
-        except subprocess.CalledProcessError:
-            return {"proof": {"mock": "data"}, "public_signals": [root]}
-
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to communicate with ZKP server: {e}")
+        
     def verifyZKProof(self, proof: dict, public_signals: list, depth: int) -> bool:
         _, _, _, vkey_path = self._get_paths(depth)
         if proof.get("mock") == "data":

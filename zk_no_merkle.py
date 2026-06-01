@@ -1,3 +1,5 @@
+import requests
+
 from zk_normal import *
 
 #from __future__ import annotations
@@ -51,7 +53,6 @@ class ZKVotingSystem:
 
     # 產生 Groth16 的零知識證明與公開信號
     def generateVoteProof(self, voter, secret: str) -> dict:
-        # 1. Convert inputs to stringified integers for snarkjs
         voter_id_int = str(int(voter.hashId, 16))
         secret_int = str(int(secret, 16))
 
@@ -60,48 +61,30 @@ class ZKVotingSystem:
             "secret": secret_int
         }
 
-        # 2. Write input.json
-        with open("input.json", "w") as f:
-            json.dump(input_data, f)
+        payload = {
+            "input": input_data
+        }
+
+        api_url = "http://localhost:3000/api/prove/no-merkle"
 
         try:
-            # 3. Generate Witness using WebAssembly
-            cmd_witness = "node no_merkle_vote_js/generate_witness.js no_merkle_vote_js/no_merkle_vote.wasm input.json witness.wtns"
-            subprocess.run(
-                cmd_witness,
-                shell=True,
-                check=True,
-                capture_output=True
-            )
+            # 發送 POST 請求給本地常駐伺服器
+            response = requests.post(api_url, json=payload)
+            response.raise_for_status() 
+            
+            result = response.json()
+            
+            if result.get("success"):
+                return {
+                    "proof": result["proof"],
+                    "public_signals": result["publicSignals"]
+                }
+            else:
+                raise Exception(f"Server returned failure: {result.get('error')}")
 
-            # 4. Generate the real ZK Proof using the proving key
-            cmd_prove = "snarkjs groth16 prove no_merkle_vote_final.zkey witness.wtns proof.json public.json"
-            subprocess.run(
-                cmd_prove,
-                shell=True,
-                check=True,
-                capture_output=True
-            )
-
-            # 5. Read the generated real proof and public signals
-            with open("proof.json", "r") as f:
-                real_proof = json.load(f)
-            with open("public.json", "r") as f:
-                real_public_signals = json.load(f)
-
-            # Clean up temporary files (Optional but recommended)
-            os.remove("input.json")
-            os.remove("witness.wtns")
-
-            return {
-                "proof": real_proof,
-                "public_signals": real_public_signals
-            }
-
-        except subprocess.CalledProcessError as e:
-            print(f"Error generating proof: {e.stderr}")
-            raise Exception("Failed to generate ZK Proof")
-
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to communicate with ZKP server: {e}")
+        
     # 投遞選票
     def castVote(self, election: Election, voter: User, ballot: Ballot) -> bool:
 
