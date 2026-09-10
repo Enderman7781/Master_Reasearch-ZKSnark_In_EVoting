@@ -1,6 +1,4 @@
 import hashlib
-import matplotlib.pyplot as plb
-import numpy
 
 # The random libararies
 import csv
@@ -10,7 +8,6 @@ import subprocess
 import json
 import tempfile
 import base64
-from poseidon_py.poseidon_hash import poseidon_hash
 
 
 # 
@@ -34,6 +31,10 @@ class Election:
 
         # format: { "voter_id_hash": {"commitment": str, "has_voted": bool} }
         self.voter_registry = {}
+
+        # Set by the experiment before accepting Merkle ballots.
+        self.merkle_root = None
+        self.merkle_depth = None
     
     
 #   User Class

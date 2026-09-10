@@ -1,0 +1,12 @@
+[
+  "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\circom.exe",
+  "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\r1cs_rebuild\\run_20260910_132442_574236\\d15\\merkle_d15.circom",
+  "--r1cs",
+  "--wasm",
+  "--sym",
+  "--O1",
+  "-l",
+  "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文",
+  "-o",
+  "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\r1cs_rebuild\\run_20260910_132442_574236\\d15"
+]

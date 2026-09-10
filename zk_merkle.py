@@ -71,6 +71,26 @@ class ZKMerkleVotingSystem:
         vkey_path = os.path.join(base_path, "vkey.json")
         return witness_gen_path, wasm_path, zkey_path, vkey_path
 
+    @staticmethod
+    def _valid_root(root):
+        # Canonical decimal string for the BN254 scalar field used by the circuit.
+        modulus = 21888242871839275222246405745257275088548364400416034343698204186575808495617
+        return (isinstance(root, str) and root.isascii() and root.isdigit()
+                and len(root) <= 77 and str(int(root)) == root and int(root) < modulus)
+
+    def configureElectionTree(self, election: Election, root: str, depth: int):
+        """Called by trusted experiment setup after registration and tree construction."""
+        if election.merkle_root is not None or election.merkle_depth is not None:
+            raise ValueError("MERKLE_TREE_ALREADY_CONFIGURED")
+        if not self._valid_root(root):
+            raise ValueError("INVALID_MERKLE_ROOT")
+        if type(depth) is not int or depth < 1:
+            raise ValueError("INVALID_MERKLE_DEPTH")
+        if election.vote_box or any(r["has_voted"] for r in election.voter_registry.values()):
+            raise ValueError("VOTING_ALREADY_STARTED")
+        election.merkle_root = root
+        election.merkle_depth = depth
+
     def generateVoterSecret(self) -> str:
         return os.urandom(31).hex()
 
@@ -86,6 +106,13 @@ class ZKMerkleVotingSystem:
             raise Exception("Failed to compute Identity Commitment")
 
     def registerVoterStatus(self, election: Election, voter_id_hash: str) -> bool:
+        # 已註冊的資格不可覆寫，包含已投票與尚未投票的紀錄。
+        if voter_id_hash in election.voter_registry:
+            raise ValueError("VOTER_ALREADY_REGISTERED")
+
+        if election.merkle_root is not None:
+            raise ValueError("REGISTRATION_CLOSED")
+
         election.voter_registry[voter_id_hash] = {"has_voted": False}
         return True
 
@@ -111,9 +138,24 @@ class ZKMerkleVotingSystem:
             subprocess.run(cmd_witness, shell=True,
                            check=True, capture_output=True)
 
-            cmd_prove = f"snarkjs groth16 prove {zkey_path} witness.wtns proof.json public.json"
-            subprocess.run(cmd_prove, shell=True,
-                           check=True, capture_output=True)
+            cmd_prove = [
+                "node",
+                "./node_modules/snarkjs/build/cli.cjs",
+                "groth16", "prove",
+                zkey_path,
+                "witness.wtns",
+                "proof.json",
+                "public.json",
+            ]
+
+            subprocess.run(
+                cmd_prove,
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
 
             with open("proof.json", "r") as f:
                 real_proof = json.load(f)
@@ -123,13 +165,11 @@ class ZKMerkleVotingSystem:
             os.remove("input.json")
             os.remove("witness.wtns")
             return {"proof": real_proof, "public_signals": real_public_signals}
-        except subprocess.CalledProcessError:
-            return {"proof": {"mock": "data"}, "public_signals": [root]}
+        except subprocess.CalledProcessError as error:
+            raise RuntimeError("ZK_PROOF_GENERATION_FAILED") from error
 
     def verifyZKProof(self, proof: dict, public_signals: list, depth: int) -> bool:
         _, _, _, vkey_path = self._get_paths(depth)
-        if proof.get("mock") == "data":
-            return True
         with tempfile.TemporaryDirectory() as temp_dir:
             proof_path = os.path.join(temp_dir, "proof.json")
             public_path = os.path.join(temp_dir, "public.json")
@@ -138,9 +178,23 @@ class ZKMerkleVotingSystem:
             with open(public_path, 'w') as f:
                 json.dump(public_signals, f)
             try:
-                cmd = f"snarkjs groth16 verify {vkey_path} {public_path} {proof_path}"
+                cmd = [
+                    "node",
+                    "./node_modules/snarkjs/build/cli.cjs",
+                    "groth16", "verify",
+                    vkey_path,
+                    public_path,
+                    proof_path,
+                ]
+
                 result = subprocess.run(
-                    cmd, shell=True, capture_output=True, text=True, check=True)
+                    cmd,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                )
                 return "OK" in result.stdout
             except subprocess.CalledProcessError:
                 return False
@@ -153,8 +207,18 @@ class ZKMerkleVotingSystem:
         if voter_record["has_voted"]:
             raise ValueError("ALREADY_VOTED")
 
+        if election.merkle_root is None or election.merkle_depth is None:
+            raise ValueError("MERKLE_TREE_NOT_CONFIGURED")
+        if type(depth) is not int or depth != election.merkle_depth:
+            raise ValueError("MERKLE_DEPTH_MISMATCH")
+        signals = ballot.public_signals
+        if not isinstance(signals, list) or len(signals) != 1 or not self._valid_root(signals[0]):
+            raise ValueError("INVALID_PUBLIC_SIGNALS")
+        if signals[0] != election.merkle_root:
+            raise ValueError("MERKLE_ROOT_MISMATCH")
+
         is_valid = self.verifyZKProof(
-            ballot.proof, ballot.public_signals, depth)
+            ballot.proof, signals, election.merkle_depth)
         if not is_valid:
             raise ValueError("ZK_VERIFICATION_FAILED")
 

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "synthetic_data": true,
+  "real_groth16": true,
+  "tested_generateVoteProof_wrapper": false,
+  "performance_benchmark": false,
+  "ciphertext_placeholder": "Base64, not AES",
+  "node": "v24.19.0"
+}

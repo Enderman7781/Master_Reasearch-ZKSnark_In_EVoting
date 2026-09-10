@@ -42,6 +42,10 @@ class ZKVotingSystem:
     # 將選民的 Commitment 寫入資料庫
 
     def registerVoterCommitment(self, election: Election, voter_id_hash: str, commitment: str) -> bool:
+        # 已註冊的資格不可覆寫，包含已投票與尚未投票的紀錄。
+        if voter_id_hash in election.voter_registry:
+            raise ValueError("VOTER_ALREADY_REGISTERED")
+
         # 將選民與對應的 Commitment 寫入選民名冊，並初始化為未投票
         election.voter_registry[voter_id_hash] = {
             "commitment": commitment,
@@ -75,12 +79,23 @@ class ZKVotingSystem:
             )
 
             # 4. Generate the real ZK Proof using the proving key
-            cmd_prove = "snarkjs groth16 prove no_merkle_vote_final.zkey witness.wtns proof.json public.json"
+            cmd_prove = [
+                "node",
+                "./node_modules/snarkjs/build/cli.cjs",
+                "groth16", "prove",
+                "no_merkle_vote_final.zkey",
+                "witness.wtns",
+                "proof.json",
+                "public.json",
+            ]
+
             subprocess.run(
                 cmd_prove,
-                shell=True,
                 check=True,
-                capture_output=True
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
             )
 
             # 5. Read the generated real proof and public signals
@@ -151,14 +166,22 @@ class ZKVotingSystem:
 
             try:
                 # Use a single string command and shell=True for macOS compatibility
-                cmd = f"snarkjs groth16 verify {vkey_path} {public_path} {proof_path}"
-                
+                cmd = [
+                    "node",
+                    "./node_modules/snarkjs/build/cli.cjs",
+                    "groth16", "verify",
+                    vkey_path,
+                    public_path,
+                    proof_path,
+                ]
+
                 result = subprocess.run(
                     cmd,
-                    shell=True,
+                    check=True,
                     capture_output=True,
                     text=True,
-                    check=True 
+                    encoding="utf-8",
+                    errors="replace",
                 )
                 
                 if "OK" in result.stdout:

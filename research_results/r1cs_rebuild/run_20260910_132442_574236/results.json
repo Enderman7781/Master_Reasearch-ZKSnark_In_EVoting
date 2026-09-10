@@ -1,0 +1,230 @@
+{
+  "environment": {
+    "status": "completed",
+    "started_utc": "2026-09-10T05:24:42.575252+00:00",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "optimization": "O1",
+    "requested_depths": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "setup_requested": false,
+    "packages": {
+      "snarkjs": "0.7.6",
+      "circomlib": "2.0.5",
+      "circomlibjs": "0.1.7"
+    },
+    "source_sha256": {
+      "build_circuit.py": "3680bcc23f5535a63dd6d256bd0bfe2cfa7f3a95925d087321568d3baf975c0b",
+      "no_merkle_vote.circom": "bcc8bd26247fc1cf70c422f95482c47d56fa392efe6d62379605800103049c00",
+      "package-lock.json": "6face790935be676a9c3b6ce243db318535465e97d68ed25b8623b1b9e299ce7"
+    },
+    "circom": "circom compiler 2.2.3",
+    "node": "v24.19.0",
+    "circomlib_circuits_sha256": "f0384ee3f57a2271ad97f5df1860ddd8902e09ae9342187ddf597dcd4e063663"
+  },
+  "results": [
+    {
+      "circuit": "no_merkle",
+      "depth": null,
+      "nonlinear": 243,
+      "linear": 274,
+      "total": 517,
+      "wires": 520,
+      "source_sha256": "bcc8bd26247fc1cf70c422f95482c47d56fa392efe6d62379605800103049c00",
+      "r1cs_sha256": "cef4e08172b8edf5ad699fcbce6261cef5d8bb79f24a1cee841f923e818ce839",
+      "wasm_bytes": 1747650
+    },
+    {
+      "circuit": "merkle_d1",
+      "depth": 1,
+      "nonlinear": 490,
+      "linear": 548,
+      "total": 1038,
+      "wires": 1041,
+      "source_sha256": "816b660ada6ef978e15074881eee030569979c364898b35793926c3aa358818d",
+      "r1cs_sha256": "8b2eceead3c2a5ce294f173bc97aec63f5796d0858cde409afde5651458fe795",
+      "wasm_bytes": 1752053
+    },
+    {
+      "circuit": "merkle_d2",
+      "depth": 2,
+      "nonlinear": 737,
+      "linear": 822,
+      "total": 1559,
+      "wires": 1562,
+      "source_sha256": "d112a869ea74fd36b62b45bfd3187c68efd9bdd076e36f56a888a4ba16d7a6ee",
+      "r1cs_sha256": "c1de265e731e58d50c732d5e29162886b9645690aacd9ff5b63b41e5a17c1537",
+      "wasm_bytes": 1755372
+    },
+    {
+      "circuit": "merkle_d3",
+      "depth": 3,
+      "nonlinear": 984,
+      "linear": 1096,
+      "total": 2080,
+      "wires": 2083,
+      "source_sha256": "759feae4c7df56b53226d7b0706af7703c4df980862dc013386fece0469b1be8",
+      "r1cs_sha256": "9c61293b70ee2b272d949ab3a3799c09e87be1cd28b9ee55123828573dc1ec6a",
+      "wasm_bytes": 1758417
+    },
+    {
+      "circuit": "merkle_d4",
+      "depth": 4,
+      "nonlinear": 1231,
+      "linear": 1370,
+      "total": 2601,
+      "wires": 2604,
+      "source_sha256": "90875a544df49c0f0b47b7f96e5a5370aa1d5149164a7441fa1821e73de5cd79",
+      "r1cs_sha256": "27d24de211205fdbf447ac175b722686296a4ce3960a80c5a2ce42f06a25a214",
+      "wasm_bytes": 1761179
+    },
+    {
+      "circuit": "merkle_d5",
+      "depth": 5,
+      "nonlinear": 1478,
+      "linear": 1644,
+      "total": 3122,
+      "wires": 3125,
+      "source_sha256": "66d892413bdc70a41e424ffd2cf0093c234779c69b0e9cb950e92765ca9cdce0",
+      "r1cs_sha256": "bb2f752a71018d8e20130a7071de7d11a7bd990c66ef5e0a965acbb9f4cf9acb",
+      "wasm_bytes": 1764153
+    },
+    {
+      "circuit": "merkle_d6",
+      "depth": 6,
+      "nonlinear": 1725,
+      "linear": 1918,
+      "total": 3643,
+      "wires": 3646,
+      "source_sha256": "4e897d065837b59e7d05554eee0266ec57e3d1ae23c8b175ccfc911f7866097f",
+      "r1cs_sha256": "f1234ce0002684e15e4df87e39f467419f25fdf3611e39c376747a30ea9c06ac",
+      "wasm_bytes": 1767197
+    },
+    {
+      "circuit": "merkle_d7",
+      "depth": 7,
+      "nonlinear": 1972,
+      "linear": 2192,
+      "total": 4164,
+      "wires": 4167,
+      "source_sha256": "a02b027d7b56e8cdc556e9a70d79c96ca5a363fd6d179ae380978aa4f9f0d35a",
+      "r1cs_sha256": "3f62fe1509c59b1ed76964d0b588ce13f35aca049e571f373235a7b69ab87aaa",
+      "wasm_bytes": 1770093
+    },
+    {
+      "circuit": "merkle_d8",
+      "depth": 8,
+      "nonlinear": 2219,
+      "linear": 2466,
+      "total": 4685,
+      "wires": 4688,
+      "source_sha256": "4a4e00f1487f3474d59c8a16ede512275156bd0e467e97e88a822857548ef2f1",
+      "r1cs_sha256": "1337f938faff6498d9e8b585bcadfcfd41012b7a4076532c598b3f527c68b952",
+      "wasm_bytes": 1773067
+    },
+    {
+      "circuit": "merkle_d9",
+      "depth": 9,
+      "nonlinear": 2466,
+      "linear": 2740,
+      "total": 5206,
+      "wires": 5209,
+      "source_sha256": "99a884da58e5c29e2325dbbcdfd1d7b9c473b8d0a39d82c98aac2a8fc4643ff5",
+      "r1cs_sha256": "ed297faa0f60d7672a8633599721f4a135d157320a66e884a112481990810b14",
+      "wasm_bytes": 1776121
+    },
+    {
+      "circuit": "merkle_d10",
+      "depth": 10,
+      "nonlinear": 2713,
+      "linear": 3014,
+      "total": 5727,
+      "wires": 5730,
+      "source_sha256": "b6f8eeb77fa27d28baf5df8332265ab1bcd893255219d1d119b3472740337ce7",
+      "r1cs_sha256": "48ca9039b163fcce853c6553546d89175fbec36ed413c49bd228fedb860021fd",
+      "wasm_bytes": 1779095
+    },
+    {
+      "circuit": "merkle_d11",
+      "depth": 11,
+      "nonlinear": 2960,
+      "linear": 3288,
+      "total": 6248,
+      "wires": 6251,
+      "source_sha256": "89f6770cc9238af4b331dd3bb3e8dae76f3c86d150f96b934b0a15c60d48fa6b",
+      "r1cs_sha256": "d958f3ad3d3cf7ccc05d477c2d572153735325963d30d2cc2b14e260ec1aa053",
+      "wasm_bytes": 1781878
+    },
+    {
+      "circuit": "merkle_d12",
+      "depth": 12,
+      "nonlinear": 3207,
+      "linear": 3562,
+      "total": 6769,
+      "wires": 6772,
+      "source_sha256": "bcc3ccf136d4eabf082b480977ff3040eaf7098a73342bda90be9d4b689d0bcb",
+      "r1cs_sha256": "edb1533d73b79359b0c6ded8e46625c17c8f23b280f1ecd530b064cc273491fd",
+      "wasm_bytes": 1784852
+    },
+    {
+      "circuit": "merkle_d13",
+      "depth": 13,
+      "nonlinear": 3454,
+      "linear": 3836,
+      "total": 7290,
+      "wires": 7293,
+      "source_sha256": "7cc1bc6c9aa4af4913ce33958a54c261e123df7db8c194a4c86e5048a991448e",
+      "r1cs_sha256": "36ad2b388e4d19598bd1be19b9aee921061976d6345c22207d8ac95d90bd741a",
+      "wasm_bytes": 1787671
+    },
+    {
+      "circuit": "merkle_d14",
+      "depth": 14,
+      "nonlinear": 3701,
+      "linear": 4110,
+      "total": 7811,
+      "wires": 7814,
+      "source_sha256": "0ff4d4b2e162a7397ff470472210d3c592639a3f2d7e01a02cdb2fe16521b78b",
+      "r1cs_sha256": "034215a0b9ff68c425868cef5f72765fb7ecfc0631a7e13261b9bd8b6e53621b",
+      "wasm_bytes": 1790644
+    },
+    {
+      "circuit": "merkle_d15",
+      "depth": 15,
+      "nonlinear": 3948,
+      "linear": 4384,
+      "total": 8332,
+      "wires": 8335,
+      "source_sha256": "ae89b836f059f6f165fc0c2fcbf52dd173d98cf6471faefe5f9cc6837e561f25",
+      "r1cs_sha256": "0d7420b6dfc9b32df25f6ecae445c47906d49b146e6c73e4d65415c9c9b8955f",
+      "wasm_bytes": 1793696
+    },
+    {
+      "circuit": "merkle_d16",
+      "depth": 16,
+      "nonlinear": 4195,
+      "linear": 4658,
+      "total": 8853,
+      "wires": 8856,
+      "source_sha256": "1ab3f87759b635df7b3e9eb744f2e8f9345d832c11c4069406854eca18e0866a",
+      "r1cs_sha256": "58b45591f18f16afa4e47274ae9d0b27eba3d2bc9e207f1f6d229e5594dd0a36",
+      "wasm_bytes": 1796731
+    }
+  ]
+}
