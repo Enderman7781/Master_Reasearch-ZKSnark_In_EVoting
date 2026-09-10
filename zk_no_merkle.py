@@ -1,3 +1,5 @@
+import requests
+
 from zk_normal import *
 
 #from __future__ import annotations
@@ -55,7 +57,6 @@ class ZKVotingSystem:
 
     # 產生 Groth16 的零知識證明與公開信號
     def generateVoteProof(self, voter, secret: str) -> dict:
-        # 1. Convert inputs to stringified integers for snarkjs
         voter_id_int = str(int(voter.hashId, 16))
         secret_int = str(int(secret, 16))
 
@@ -64,9 +65,11 @@ class ZKVotingSystem:
             "secret": secret_int
         }
 
-        # 2. Write input.json
-        with open("input.json", "w") as f:
-            json.dump(input_data, f)
+        payload = {
+            "input": input_data
+        }
+
+        api_url = "http://localhost:3000/api/prove/no-merkle"
 
         try:
             # 3. Generate Witness using WebAssembly
@@ -117,6 +120,9 @@ class ZKVotingSystem:
             print(f"Error generating proof: {e.stderr}")
             raise Exception("Failed to generate ZK Proof")
 
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to communicate with ZKP server: {e}")
+        
     # 投遞選票
     def castVote(self, election: Election, voter: User, ballot: Ballot) -> bool:
 
