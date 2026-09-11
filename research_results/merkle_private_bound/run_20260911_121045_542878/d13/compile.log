@@ -1,0 +1,12 @@
+template instances: 73
+non-linear constraints: 3697
+linear constraints: 4110
+public inputs: 2
+private inputs: 28
+public outputs: 1
+wires: 7811
+labels: 11617
+Written successfully: C:\Users\Ender\Desktop\Class Data\畢業論文\research_results\merkle_private_bound\run_20260911_121045_542878\d13\merkle_d13.r1cs
+Written successfully: C:\Users\Ender\Desktop\Class Data\畢業論文\research_results\merkle_private_bound\run_20260911_121045_542878\d13\merkle_d13.sym
+Written successfully: C:\Users\Ender\Desktop\Class Data\畢業論文\research_results\merkle_private_bound\run_20260911_121045_542878\d13\merkle_d13_js\merkle_d13.wasm
+Everything went okay

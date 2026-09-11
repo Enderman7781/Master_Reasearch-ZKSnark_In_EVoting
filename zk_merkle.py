@@ -1,28 +1,90 @@
-import os
+"""Private Merkle membership + packet binding; not a complete voting scheme.
+
+Proof generation is a prover-side operation; verification takes no identity.
+The original identity-based castVote is deliberately disabled.
+"""
+from dataclasses import dataclass
+import hashlib
 import json
 import math
-import tempfile
+import os
+from pathlib import Path
 import subprocess
+import tempfile
 
-import requests
-from zk_normal import User, Election, Ballot, FILE_PATH
+from zk_normal import User, Election
+
+ROOT = Path(__file__).resolve().parent
+FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617
+SCHEMA = "merkle-private-packet-binding-v1"
+DOMAIN = b"zk-voting:packet-binding:v1\x00"
 
 
-def calculate_optimal_depth(num_voters: int) -> int:
-    if num_voters <= 1:
-        return 1
-    return math.ceil(math.log2(num_voters))
+def calculate_optimal_depth(num_voters):
+    return max(1, (max(1, num_voters) - 1).bit_length())
 
 
-def poseidon_hash_2(left: str, right: str) -> str:
-    cmd = f"node {FILE_PATH['commitment']} {left} {right}"
-    result = subprocess.run(
-        cmd, shell=True, capture_output=True, text=True, check=True)
-    return result.stdout.strip()
+def packet_hash(encrypted_vote):
+    # Identical to the already tested No-Merkle bound v1 framing.
+    if not isinstance(encrypted_vote, str) or not encrypted_vote:
+        raise ValueError("INVALID_VOTE_PACKET")
+    raw = encrypted_vote.encode("utf-8")
+    digest = hashlib.sha256(DOMAIN + len(raw).to_bytes(8, "big") + raw).digest()
+    return str(int.from_bytes(digest, "big") % FIELD)
+
+
+def valid_field(x):
+    return (isinstance(x, str) and 1 <= len(x) <= 77 and x.isascii()
+            and x.isdecimal() and str(int(x)) == x and int(x) < FIELD)
+
+
+def valid_signals(signals):
+    return isinstance(signals, list) and len(signals) == 3 and all(map(valid_field, signals))
+
+
+def check_depth(depth):
+    if type(depth) is not int or not 1 <= depth <= 16:
+        raise ValueError("INVALID_MERKLE_DEPTH")
+
+
+def run_node(args):
+    try:
+        return subprocess.run(["node", *map(str, args)], cwd=ROOT,
+                              capture_output=True, check=True, text=True,
+                              encoding="utf-8", errors="replace")
+    except subprocess.CalledProcessError as exc:
+        raise RuntimeError(f"ZK_COMMAND_FAILED ({exc.returncode})\n{exc.stdout}\n{exc.stderr}") from exc
+
+
+def poseidon_hash_2(left, right):
+    return run_node([ROOT / "commitment.js", left, right]).stdout.strip()
+
+
+@dataclass(frozen=True)
+class MerkleContext:
+    # Selected by trusted experiment setup, not supplied by the submitting voter.
+    root: str
+    depth: int
+
+    def __post_init__(self):
+        check_depth(self.depth)
+        if not valid_field(self.root):
+            raise ValueError("INVALID_MERKLE_ROOT")
+
+
+@dataclass(frozen=True)
+class MerkleProofPacket:
+    encrypted_vote: str
+    proof: dict
+    public_signals: list
+    # No voter identity, C, index or path; do not use the old Ballot.commitment.
 
 
 class ZKMerkleTree:
     def __init__(self, leaves: list, depth: int):
+        check_depth(depth)
+        if not isinstance(leaves, list) or not all(valid_field(x) for x in leaves):
+            raise ValueError("INVALID_LEAVES")
         self.depth = depth
         self.max_leaves = 2 ** depth
         if len(leaves) > self.max_leaves:
@@ -46,6 +108,8 @@ class ZKMerkleTree:
     def get_root(self) -> str: return self.tree[-1][0]
 
     def get_path(self, index: int) -> dict:
+        if type(index) is not int or not 0 <= index < len(self.leaves):
+            raise ValueError("INVALID_LEAF_INDEX")
         path_elements = []
         path_indices = []
         current_index = index
@@ -59,193 +123,132 @@ class ZKMerkleTree:
 
 
 class ZKMerkleVotingSystem:
-    def __init__(self, circuits_dir="compiled_circuits"):
-        self.circuits_dir = circuits_dir
+    def __init__(self, circuits_dir=None):
+        if circuits_dir is None:
+            pointer = ROOT / "research_results/merkle_private_bound/latest.json"
+            if not pointer.is_file():
+                raise FileNotFoundError("Run python build_circuit.py --setup --test first")
+            config = json.loads(pointer.read_text(encoding="utf-8"))
+            if config.get("circuit_schema") != SCHEMA:
+                raise ValueError("CIRCUIT_SCHEMA_MISMATCH")
+            circuits_dir = ROOT / config["path"]
+        self.circuits_dir = Path(circuits_dir).resolve()
+        manifest_path = self.circuits_dir / "results.json"
+        if not manifest_path.is_file():
+            raise FileNotFoundError(f"Missing new circuit manifest: {manifest_path}")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("environment", {}).get("circuit_schema") != SCHEMA:
+            raise ValueError("CIRCUIT_SCHEMA_MISMATCH")
+        self.depths = {row["depth"] for row in manifest["results"] if row["depth"] is not None}
+        self.cli = ROOT / "node_modules/snarkjs/build/cli.cjs"
 
-    def _get_paths(self, depth: int):
-        """輔助函數：動態組合對應深度的檔案路徑"""
-        base_path = os.path.join(self.circuits_dir, f"d{depth}")
-        wasm_path = os.path.join(
-            base_path, f"merkle_d{depth}_js", f"merkle_d{depth}.wasm")
-        witness_gen_path = os.path.join(
-            base_path, f"merkle_d{depth}_js", "generate_witness.js")
-        zkey_path = os.path.join(base_path, "final.zkey")
-        vkey_path = os.path.join(base_path, "vkey.json")
-        return witness_gen_path, wasm_path, zkey_path, vkey_path
+    def _get_paths(self, depth):
+        check_depth(depth)
+        if depth not in self.depths:
+            raise ValueError("MERKLE_DEPTH_NOT_BUILT")
+        directory = self.circuits_dir / f"d{depth}"
+        wasm = directory / f"merkle_d{depth}_js"
+        return (wasm / "generate_witness.js", wasm / f"merkle_d{depth}.wasm",
+                directory / "final.zkey", directory / "vkey.json")
 
-    @staticmethod
-    def _valid_root(root):
-        # Canonical decimal string for the BN254 scalar field used by the circuit.
-        modulus = 21888242871839275222246405745257275088548364400416034343698204186575808495617
-        return (isinstance(root, str) and root.isascii() and root.isdigit()
-                and len(root) <= 77 and str(int(root)) == root and int(root) < modulus)
+    _valid_root = staticmethod(valid_field)
 
-    def configureElectionTree(self, election: Election, root: str, depth: int):
-        """Called by trusted experiment setup after registration and tree construction."""
+    def configureElectionTree(self, election, root, depth):
+        """Trusted setup compatibility helper; returns identity-free context."""
+        context = MerkleContext(root, depth)
         if election.merkle_root is not None or election.merkle_depth is not None:
             raise ValueError("MERKLE_TREE_ALREADY_CONFIGURED")
-        if not self._valid_root(root):
-            raise ValueError("INVALID_MERKLE_ROOT")
-        if type(depth) is not int or depth < 1:
-            raise ValueError("INVALID_MERKLE_DEPTH")
         if election.vote_box or any(r["has_voted"] for r in election.voter_registry.values()):
             raise ValueError("VOTING_ALREADY_STARTED")
-        election.merkle_root = root
-        election.merkle_depth = depth
+        election.merkle_root, election.merkle_depth = root, depth
+        return context
 
-    def generateVoterSecret(self) -> str:
+    def generateVoterSecret(self):
         return os.urandom(31).hex()
 
-    def computeIdentityCommitment(self, voter: User, secret: str) -> str:
-        voter_id_int = str(int(voter.hashId, 16))
-        secret_int = str(int(secret, 16))
-        try:
-            cmd = f"node {FILE_PATH['commitment']} {voter_id_int} {secret_int}"
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, check=True)
-            return result.stdout.strip()
-        except subprocess.CalledProcessError as e:
-            raise Exception("Failed to compute Identity Commitment")
+    def computeIdentityCommitment(self, voter, secret):
+        return poseidon_hash_2(str(int(voter.hashId, 16)), str(int(secret, 16)))
 
-    def registerVoterStatus(self, election: Election, voter_id_hash: str) -> bool:
-        # 已註冊的資格不可覆寫，包含已投票與尚未投票的紀錄。
+    def registerVoterStatus(self, election, voter_id_hash):
+        # Retained for trusted registration experiments only; verifier never reads it.
         if voter_id_hash in election.voter_registry:
             raise ValueError("VOTER_ALREADY_REGISTERED")
-
         if election.merkle_root is not None:
             raise ValueError("REGISTRATION_CLOSED")
-
         election.voter_registry[voter_id_hash] = {"has_voted": False}
         return True
 
-    def generateVoteProof(self, voter, secret: str, merkle_path: dict, root: str, depth: int) -> dict:
-        voter_id_int = str(int(voter.hashId, 16))
-        secret_int = str(int(secret, 16))
+    def generateVoteProof(self, voter, secret, merkle_path, root, depth, encrypted_vote):
+        """Prover-side function. Its private inputs must not be sent to the verifier."""
+        MerkleContext(root, depth)
+        elements, indices = merkle_path.get("path_elements"), merkle_path.get("path_indices")
+        if (not isinstance(elements, list) or not isinstance(indices, list)
+                or len(elements) != depth or len(indices) != depth
+                or not all(map(valid_field, elements))
+                or not all(type(x) is int and x in (0, 1) for x in indices)):
+            raise ValueError("INVALID_MERKLE_PATH")
+        witness_js, wasm, zkey, _ = self._get_paths(depth)
+        for file in (witness_js, wasm, zkey):
+            if not file.is_file():
+                raise FileNotFoundError(file)
+        h = packet_hash(encrypted_vote)
+        with tempfile.TemporaryDirectory(prefix="merkle_prove_") as tmp:
+            tmp = Path(tmp)
+            inp, witness = tmp / "input.json", tmp / "witness.wtns"
+            proof_file, public_file = tmp / "proof.json", tmp / "public.json"
+            inp.write_text(json.dumps({
+                "voter_id": str(int(voter.hashId, 16)), "secret": str(int(secret, 16)),
+                "root": root, "voteHash": h, "path_elements": elements,
+                "path_indices": indices
+            }), encoding="utf-8")
+            run_node([witness_js, wasm, inp, witness])
+            run_node([self.cli, "groth16", "prove", zkey, witness, proof_file, public_file])
+            proof = json.loads(proof_file.read_text(encoding="utf-8"))
+            signals = json.loads(public_file.read_text(encoding="utf-8"))
+        if not valid_signals(signals) or signals[1:] != [root, h]:
+            raise RuntimeError("PUBLIC_SIGNALS_MISMATCH")
+        return {"proof": proof, "public_signals": signals}
 
-        input_data = {
-            "voter_id": voter_id_int,
-            "secret": secret_int,
-            "root": root,
-            "path_elements": merkle_path["path_elements"],
-            "path_indices": merkle_path["path_indices"]
-        }
-
-        payload = {
-            "input": input_data,
-            "depth": depth
-        }
-
-        api_url = "http://localhost:3000/api/prove/merkle"
-
-        try:
-            # 動態調用對應深度的 .wasm 和 .zkey
-            cmd_witness = f"node {witness_gen_path} {wasm_path} input.json witness.wtns"
-            subprocess.run(cmd_witness, shell=True,
-                           check=True, capture_output=True)
-
-            cmd_prove = [
-                "node",
-                "./node_modules/snarkjs/build/cli.cjs",
-                "groth16", "prove",
-                zkey_path,
-                "witness.wtns",
-                "proof.json",
-                "public.json",
-            ]
-
-            subprocess.run(
-                cmd_prove,
-                check=True,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-            )
-
-            with open("proof.json", "r") as f:
-                real_proof = json.load(f)
-            with open("public.json", "r") as f:
-                real_public_signals = json.load(f)
-
-            os.remove("input.json")
-            os.remove("witness.wtns")
-            return {"proof": real_proof, "public_signals": real_public_signals}
-        except subprocess.CalledProcessError as error:
-            raise RuntimeError("ZK_PROOF_GENERATION_FAILED") from error
-
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"Failed to communicate with ZKP server: {e}")
-        
-    def verifyZKProof(self, proof: dict, public_signals: list, depth: int) -> bool:
-        _, _, _, vkey_path = self._get_paths(depth)
-        with tempfile.TemporaryDirectory() as temp_dir:
-            proof_path = os.path.join(temp_dir, "proof.json")
-            public_path = os.path.join(temp_dir, "public.json")
-            with open(proof_path, 'w') as f:
-                json.dump(proof, f)
-            with open(public_path, 'w') as f:
-                json.dump(public_signals, f)
+    def verifyZKProof(self, proof, public_signals, depth):
+        """Raw CLI verification; use verifyBallotProof for root/packet checks too."""
+        if not isinstance(proof, dict) or not valid_signals(public_signals):
+            return False
+        _, _, _, vkey = self._get_paths(depth)
+        if not vkey.is_file():
+            raise FileNotFoundError(vkey)
+        with tempfile.TemporaryDirectory(prefix="merkle_verify_") as tmp:
+            tmp = Path(tmp)
+            proof_file, public_file = tmp / "proof.json", tmp / "public.json"
+            proof_file.write_text(json.dumps(proof), encoding="utf-8")
+            public_file.write_text(json.dumps(public_signals), encoding="utf-8")
             try:
-                cmd = [
-                    "node",
-                    "./node_modules/snarkjs/build/cli.cjs",
-                    "groth16", "verify",
-                    vkey_path,
-                    public_path,
-                    proof_path,
-                ]
-
-                result = subprocess.run(
-                    cmd,
-                    check=True,
-                    capture_output=True,
-                    text=True,
-                    encoding="utf-8",
-                    errors="replace",
-                )
-                return "OK" in result.stdout
-            except subprocess.CalledProcessError:
+                result = run_node([self.cli, "groth16", "verify", vkey, public_file, proof_file])
+            except RuntimeError:
                 return False
+            return "OK!" in result.stdout
 
-    def castVote(self, election: Election, voter: User, ballot: Ballot, depth: int) -> bool:
-        if voter.hashId not in election.voter_registry:
-            raise ValueError("VOTER_NOT_REGISTERED")
-        voter_record = election.voter_registry[voter.hashId]
-        
-        if voter_record["has_voted"]:
-            raise ValueError("ALREADY_VOTED")
-
-        if election.merkle_root is None or election.merkle_depth is None:
-            raise ValueError("MERKLE_TREE_NOT_CONFIGURED")
-        if type(depth) is not int or depth != election.merkle_depth:
-            raise ValueError("MERKLE_DEPTH_MISMATCH")
-        signals = ballot.public_signals
-        if not isinstance(signals, list) or len(signals) != 1 or not self._valid_root(signals[0]):
+    def verifyBallotProof(self, context, packet):
+        """Identity-free, stateless verification; NOT ballot acceptance or deduplication."""
+        if not isinstance(context, MerkleContext):
+            raise TypeError("TRUSTED_MERKLE_CONTEXT_REQUIRED")
+        if not isinstance(packet, MerkleProofPacket):
+            raise TypeError("MERKLE_PROOF_PACKET_REQUIRED")
+        signals = packet.public_signals
+        if not valid_signals(signals):
             raise ValueError("INVALID_PUBLIC_SIGNALS")
-        if signals[0] != election.merkle_root:
+        if signals[1] != context.root:
             raise ValueError("MERKLE_ROOT_MISMATCH")
-
-        is_valid = self.verifyZKProof(
-            ballot.proof, signals, election.merkle_depth)
-        if not is_valid:
+        if signals[2] != packet_hash(packet.encrypted_vote):
+            raise ValueError("VOTE_HASH_MISMATCH")
+        if not self.verifyZKProof(packet.proof, signals, context.depth):
             raise ValueError("ZK_VERIFICATION_FAILED")
-
-        voter_record["has_voted"] = True
-        election.vote_box.append(ballot.encrypted_vote)
         return True
 
-    def tally(self, election: Election, decrypt_fn) -> dict:
-        results = {"candidate_votes": {c_id: 0 for c_id in election.candidates},
-                   "blank_votes": 0, "total_votes": len(election.vote_box)}
-        for encrypted_vote in election.vote_box:
-            try:
-                decrypted_val = decrypt_fn(encrypted_vote)
-                if decrypted_val == Election.BLANK_VOTE:
-                    results["blank_votes"] += 1
-                elif decrypted_val in results["candidate_votes"]:
-                    results["candidate_votes"][decrypted_val] += 1
-                else:
-                    results["blank_votes"] += 1
-            except Exception:
-                results["blank_votes"] += 1
-        return results
+    def castVote(self, *args, **kwargs):
+        raise NotImplementedError(
+            "Identity-based castVote is disabled. Use verifyBallotProof(context, packet); "
+            "this component does not implement anonymous double-vote prevention."
+        )
+
+    def tally(self, *args, **kwargs):
+        raise NotImplementedError("This proof component does not collect or tally ballots.")

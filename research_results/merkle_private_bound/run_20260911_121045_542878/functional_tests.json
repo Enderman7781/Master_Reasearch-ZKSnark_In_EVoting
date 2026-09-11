@@ -1,0 +1,338 @@
+[
+  {
+    "depth": 1,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 2,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 3,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 4,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 5,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 6,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 7,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 8,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 9,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 10,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 11,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 12,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 13,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 14,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 15,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  },
+  {
+    "depth": 16,
+    "status": "passed",
+    "public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "checks": [
+      "original_valid",
+      "packet_replaced",
+      "packet_and_hash_replaced",
+      "binding_replaced",
+      "unapproved_root",
+      "mock_proof",
+      "nonmember",
+      "wrong_path",
+      "stateless_repeat"
+    ],
+    "anonymous_double_vote_prevention": false
+  }
+]

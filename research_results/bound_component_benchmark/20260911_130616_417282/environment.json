@@ -1,0 +1,37 @@
+{
+  "status": "completed",
+  "run_id": "20260911_130616_417282",
+  "started_utc": "2026-09-11T05:06:16.418282+00:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10",
+  "node": "v24.19.0",
+  "rounds": 2,
+  "sample_counts": [
+    8
+  ],
+  "source": "synthetic users; alternating choices encoded in Base64; NOT AES",
+  "scope": "stateless eligibility and packet-binding proof components, CLI",
+  "order": "odd rounds NM then M; even rounds M then NM",
+  "warmup": "none; first sample included",
+  "merkle_artifacts": "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\merkle_private_bound\\run_20260911_121045_542878",
+  "no_merkle_artifacts": "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\no_merkle_bound_v1",
+  "files_sha256": {
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\benchmark.ipynb": "f2eb41531d9d36db40815c5a01fded27def2045a09ba703d28fac38cf5d6d4a4",
+    "c:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\zk_no_merkle_bound.py": "e27f81b9446e0ed3da725dead80c71a35fadfd6bf051d497ce6bf8508ed98f5d",
+    "c:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\zk_merkle.py": "6b98a90a7bb69e3d8664929444d2536893923b348d5d528a344a5af4d49776e7",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\zk_no_merkle.py": "7d85bdae5041d6b849b4fdca7b57465c58bfd681ed9f496d17c72ca64f36ea35",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\zk_normal.py": "127eb5b2197bc502eac00a2cadeb1b57d87bea6c28a05d23b02dbd2c2d5e8e10",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\commitment.js": "54064bfb11417b40144c57e716b4594724ecc617873544feae0db96464818b1a",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\package-lock.json": "9b80b16630bbe874d00291f099ae0de08d292c788da2551f9f0e7aa8ab7e7641",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\no_merkle_bound_v1\\final.zkey": "55403ad42a6f7b14baf7b76a39819d1cd74c94d2d2dc4300f1fc15f6aa1cbfc6",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\no_merkle_bound_v1\\vkey.json": "af1b118a41ec4588502906958f52f6010ba8103a29daee7a64571dcd7830eb93",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\no_merkle_bound_v1\\no_merkle_bound_js\\no_merkle_bound.wasm": "11b33b074e5b6fff3f003cd8cdde5d025e955cdd31efd8f14b0f0e3158b71c37",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\merkle_private_bound\\run_20260911_121045_542878\\results.json": "2a728713715a5b2a660c1890556a85aaa7ae7a23ad3041eeae5cd60d13eb85a4",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\merkle_private_bound\\run_20260911_121045_542878\\d3\\merkle_d3_js\\generate_witness.js": "4995a2e6b01432f76182abec6a831fdaf7f840384035072002ccaa43101b14d4",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\merkle_private_bound\\run_20260911_121045_542878\\d3\\merkle_d3_js\\merkle_d3.wasm": "1ce1aa1d87cf562d1fb988a441fea01dbf09b5eab4bafedbe2c602a94474cc57",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\merkle_private_bound\\run_20260911_121045_542878\\d3\\final.zkey": "4a97020b6be7553521475af308417897e7e57eb40b50edbdc022091c88aef5ca",
+    "C:\\Users\\Ender\\Desktop\\Class Data\\畢業論文\\research_results\\merkle_private_bound\\run_20260911_121045_542878\\d3\\vkey.json": "cf72d4c383e2f7b9c5293c52f10fce39c33659821fdb6552b21087efdcc38df8"
+  },
+  "memory_measured": false,
+  "ended_utc": "2026-09-11T05:07:16.338821+00:00"
+}

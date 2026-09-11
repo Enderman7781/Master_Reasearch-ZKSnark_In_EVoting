@@ -1,4 +1,4 @@
-"""R1CS experiment: python build_circuit.py (No-Merkle and depths 1..16).
+"""Private Merkle membership + packet binding experiment: python build_circuit.py --setup --test (depths 1..16).
 
 Python standard library only. Run from the project root on Windows.
 Default: --O1, R1CS/WASM/SYM plus logs, no trusted setup.
@@ -20,7 +20,8 @@ import sys
 
 MAX_DEPTH = 16
 PTAU_FILE = "pot16_final.ptau"
-OUTPUT_DIR = "research_results/r1cs_rebuild"
+OUTPUT_DIR = "research_results/merkle_private_bound"
+SCHEMA = "merkle-private-packet-binding-v1"
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 
@@ -34,11 +35,17 @@ template DualMux() {{
     out[1] <== (in[0] - in[1])*s + in[1];
 }}
 template MerkleVote(levels) {{
-    signal input root; signal input voter_id; signal input secret;
+    signal input root; signal input voteHash;
+    signal output binding;
+    signal input voter_id; signal input secret;
     signal input path_elements[levels]; signal input path_indices[levels];
     component leafHasher = Poseidon(2);
     leafHasher.inputs[0] <== voter_id; leafHasher.inputs[1] <== secret;
     signal leaf <== leafHasher.out;
+    component packetBinding = Poseidon(2);
+    packetBinding.inputs[0] <== secret;
+    packetBinding.inputs[1] <== voteHash;
+    binding <== packetBinding.out;
     component hashers[levels]; component mux[levels];
     signal levelHashes[levels + 1]; levelHashes[0] <== leaf;
     for (var i = 0; i < levels; i++) {{
@@ -51,7 +58,7 @@ template MerkleVote(levels) {{
     }}
     root === levelHashes[levels];
 }}
-component main {{public [root]}} = MerkleVote({depth});
+component main {{public [root, voteHash]}} = MerkleVote({depth});
 """
 
 def sha256(path):
@@ -88,6 +95,8 @@ def write_results(folder, metadata, rows):
     for r in rows:
         lines.append(f"| {r['circuit']} | {r['depth'] if r['depth'] is not None else '-'} | {r['nonlinear']} | {r['linear']} | {r['total']} | {r['wires']} |")
     lines += ['', '此表不代表證明時間或驗證時間；不同電路的驗證關係與公開資訊不同。',
+              'Merkle 公開訊號為 [binding, root, voteHash]；身分、C 與成員路徑不公開。',
+              '本版是成員資格與封包繫結證明元件，不包含匿名防重投或完整投票流程。',
               '各子目錄保留原始電路副本、R1CS、WASM、SYM、compile.log 與 r1cs_info.log。',
               '若執行中途失敗，本表僅列出已完成項目，請查 run_error.txt。',
               '加上 --setup 時產生的金鑰僅供本機實驗，不能作為正式可信設定完成的證據。', '']
@@ -102,9 +111,13 @@ def main():
     parser.add_argument('--optimization', choices=['O0', 'O1', 'O2'], default='O1')
     parser.add_argument('--setup', action='store_true', help='Also generate fresh experimental zkey/vkey files')
     parser.add_argument('--ptau', default=PTAU_FILE)
+    parser.add_argument('--test', action='store_true', help='Run real proof checks for every built depth; requires --setup')
+    parser.add_argument('--include-no-merkle', action='store_true', help='Also rebuild the existing no_merkle_bound.circom')
     args = parser.parse_args()
     if any(d < 1 or d > MAX_DEPTH for d in args.depths):
         parser.error('Depth must be in 1..16')
+    if args.test and not args.setup:
+        parser.error('--test requires --setup')
     root = args.project_dir.resolve()
     compiler = args.compiler or (str(root / 'circom.exe') if os.name == 'nt' else shutil.which('circom'))
     if compiler and Path(compiler).exists():
@@ -113,8 +126,13 @@ def main():
         compiler = shutil.which(compiler)
     node = shutil.which('node')
     cli = root / 'node_modules/snarkjs/build/cli.cjs'
-    nm = root / 'no_merkle_vote.circom'
-    for path in (cli, nm, root / 'node_modules/circomlib/circuits/poseidon.circom'):
+    nm = root / 'no_merkle_bound.circom'
+    required = [cli, root / 'node_modules/circomlib/circuits/poseidon.circom']
+    if args.include_no_merkle:
+        required.append(nm)
+    if args.test:
+        required.append(root / 'test_merkle_binding.py')
+    for path in required:
         if not path.is_file():
             parser.error(f'Missing file: {path}')
     if not compiler or not node:
@@ -127,7 +145,9 @@ def main():
     metadata = {'status': 'running', 'started_utc': datetime.now(timezone.utc).isoformat(),
                 'platform': platform.platform(), 'python': platform.python_version(),
                 'optimization': args.optimization, 'requested_depths': sorted(set(args.depths)),
-                'setup_requested': args.setup, 'packages': {}, 'source_sha256': {}}
+                'setup_requested': args.setup, 'functional_tests_requested': args.test,
+                'circuit_schema': SCHEMA, 'merkle_public_signals': ['binding', 'root', 'voteHash'],
+                'packages': {}, 'source_sha256': {}}
     rows = []
     try:
         metadata['circom'] = execute([compiler, '--version'], root, folder / 'circom_version.log').strip()
@@ -135,7 +155,7 @@ def main():
         for package in ['snarkjs', 'circomlib', 'circomlibjs']:
             package_json = root / 'node_modules' / package / 'package.json'
             metadata['packages'][package] = json.loads(package_json.read_text(encoding='utf-8'))['version'] if package_json.exists() else None
-        for path in [Path(__file__).resolve(), nm, root / 'package-lock.json']:
+        for path in [Path(__file__).resolve(), nm, root / 'zk_merkle.py', root / 'test_merkle_binding.py', root / 'package-lock.json']:
             if path.is_file():
                 metadata['source_sha256'][path.name] = sha256(path)
         # Dependency changes are recorded even if package.json versions are unchanged.
@@ -146,7 +166,7 @@ def main():
             digest.update(b'\0' + path.read_bytes() + b'\0')
         metadata['circomlib_circuits_sha256'] = digest.hexdigest()
         write_results(folder, metadata, rows)
-        jobs = [('no_merkle', None, nm.read_text(encoding='utf-8-sig'))]
+        jobs = [('no_merkle', None, nm.read_text(encoding='utf-8-sig'))] if args.include_no_merkle else []
         jobs += [(f'merkle_d{d}', d, merkle_source(d)) for d in sorted(set(args.depths))]
         for name, depth, source_text in jobs:
             print(f'Building {name}...', flush=True)
@@ -169,16 +189,61 @@ def main():
                    'wasm_bytes': (target / f'{name}_js' / f'{name}.wasm').stat().st_size}
             if row['nonlinear'] + row['linear'] != row['total']:
                 raise ValueError(f'{name}: constraint totals do not match; inspect logs')
+            expected_inputs = 2 if depth is not None else 1
+            expected_outputs = 1 if depth is not None else 2
+            row['public_inputs'] = metric(info, r'# of Public Inputs:\s*(\d+)')
+            row['public_outputs'] = metric(info, r'# of Outputs:\s*(\d+)')
+            row['private_inputs'] = metric(info, r'# of Private Inputs:\s*(\d+)')
+            if (row['public_inputs'], row['public_outputs']) != (expected_inputs, expected_outputs):
+                raise ValueError(f'{name}: unexpected public signal counts')
+            expected = ['binding', 'root', 'voteHash'] if depth is not None else ['commitment', 'binding', 'voteHash']
+            wire_names = {}
+            for line in (target / f'{name}.sym').read_text(encoding='utf-8').splitlines():
+                _, wire, _, label = line.split(',', 3)
+                if 1 <= int(wire) <= 3:
+                    wire_names.setdefault(int(wire), set()).add(label)
+            # Optimizers may alias internal signals to public wires. Allow aliases,
+            # but never an identity/leaf/secret/path signal on a public wire.
+            for index, label in enumerate(expected, 1):
+                if 'main.' + label not in wire_names.get(index, set()):
+                    raise ValueError(f'{name}: unexpected public signal order: {wire_names}')
+            if depth is not None:
+                for labels in wire_names.values():
+                    for label in labels:
+                        if any(part in label for part in ('voter_id', 'secret', 'path_elements', 'path_indices', 'leafHasher', 'main.leaf')):
+                            raise ValueError(f'{name}: private signal appears on public wire: {label}')
+            row['public_signal_order'] = expected
             if args.setup:
+                print('  Generating and checking local experimental keys...', flush=True)
                 execute([node, cli, 'groth16', 'setup', r1cs, ptau, target / '0000.zkey'], root, target / 'setup.log')
                 execute([node, cli, 'zkey', 'contribute', target / '0000.zkey', target / 'final.zkey',
                          '--name=local-experiment', '-e=' + secrets.token_hex(32)], root, target / 'contribute.log')
+                execute([node, cli, 'zkey', 'verify', r1cs, ptau, target / 'final.zkey'], root, target / 'zkey_verify.log')
                 execute([node, cli, 'zkey', 'export', 'verificationkey', target / 'final.zkey', target / 'vkey.json'], root, target / 'vkey_export.log')
+                vkey = json.loads((target / 'vkey.json').read_text(encoding='utf-8'))
+                if vkey.get('nPublic') != 3:
+                    raise ValueError(f'{name}: expected 3 public signals in vkey')
+                row['zkey_sha256'] = sha256(target / 'final.zkey')
+                row['vkey_sha256'] = sha256(target / 'vkey.json')
             rows.append(row)
             write_results(folder, metadata, rows)
             print(f"  nonlinear={row['nonlinear']}, linear={row['linear']}, total={row['total']}", flush=True)
+        if args.test:
+            print('Running real proof checks for every requested depth (not a benchmark)...', flush=True)
+            output = execute([sys.executable, root / 'test_merkle_binding.py',
+                              '--circuits-dir', folder, '--depths', *sorted(set(args.depths))],
+                             root, folder / 'functional_tests.log')
+            print(output, flush=True)
+            metadata['functional_tests_passed'] = True
         metadata['status'] = 'completed'
         write_results(folder, metadata, rows)
+        if args.setup:
+            pointer = root / OUTPUT_DIR / 'latest.json'
+            staged = folder / 'latest_pending.json'
+            staged.write_text(json.dumps({'circuit_schema': SCHEMA,
+                'path': folder.relative_to(root).as_posix()}, indent=2), encoding='utf-8')
+            staged.replace(pointer)
+        print('MERKLE_BOUND_BATCH_OK', flush=True)
         print(f'Completed. Results: {folder / "summary.md"}', flush=True)
     except Exception as error:
         metadata['status'] = 'failed'

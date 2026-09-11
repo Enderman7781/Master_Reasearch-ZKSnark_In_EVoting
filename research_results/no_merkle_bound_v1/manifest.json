@@ -1,0 +1,16 @@
+{
+  "compiler": "circom compiler 2.2.3",
+  "optimization": "O1",
+  "public_signals": [
+    "commitment",
+    "binding",
+    "voteHash"
+  ],
+  "setup_scope": "local simulation",
+  "sha256": {
+    "no_merkle_bound.circom": "85ef5e87c0694bca7bc32c28556e05514dd9403910c8a9fcaab4a4c15c26b93c",
+    "no_merkle_bound.r1cs": "b352e2680c0c7daf364734dfedd54ab21167f1a6c6e303650a8044cc2f44b953",
+    "final.zkey": "55403ad42a6f7b14baf7b76a39819d1cd74c94d2d2dc4300f1fc15f6aa1cbfc6",
+    "vkey.json": "af1b118a41ec4588502906958f52f6010ba8103a29daee7a64571dcd7830eb93"
+  }
+}

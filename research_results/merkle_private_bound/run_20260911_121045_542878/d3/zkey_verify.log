@@ -1,0 +1,23 @@
+[INFO]  snarkJS: Reading r1cs
+[INFO]  snarkJS: Reading tauG1
+[INFO]  snarkJS: Reading tauG2
+[INFO]  snarkJS: Reading alphatauG1
+[INFO]  snarkJS: Reading betatauG1
+[INFO]  snarkJS: Circuit hash: 
+		028cc261 794ed78d b6f9b969 0ed70578
+		3d26d565 06919b77 9bdf0307 5d5ee96f
+		a7c5ebc2 4cb20f0e 57650929 06a0cf1d
+		68bdfc42 f2a690e5 54aeda8a 08699f55
+[INFO]  snarkJS: Circuit Hash: 
+		028cc261 794ed78d b6f9b969 0ed70578
+		3d26d565 06919b77 9bdf0307 5d5ee96f
+		a7c5ebc2 4cb20f0e 57650929 06a0cf1d
+		68bdfc42 f2a690e5 54aeda8a 08699f55
+[INFO]  snarkJS: -------------------------
+[INFO]  snarkJS: contribution #1 local-experiment:
+		739d3dca 537cdf8f ed7086f2 af923c60
+		15c2cb49 1c90cd35 5e92fd4d 519b37ad
+		eb8e3526 ab22d143 dd0eb9d5 030d2a3d
+		e34e72ad 715add70 73027e5e f69653b9
+[INFO]  snarkJS: -------------------------
+[INFO]  snarkJS: ZKey Ok!

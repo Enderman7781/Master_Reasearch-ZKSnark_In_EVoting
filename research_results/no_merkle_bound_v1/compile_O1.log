@@ -1,0 +1,12 @@
+[32mtemplate instances[0m: 72
+non-linear constraints: 486
+linear constraints: 548
+public inputs: 1
+private inputs: 2
+public outputs: 2
+wires: 1038
+labels: 1540
+[32mWritten successfully:[0m C:\Users\Ender\Desktop\Class Data\畢業論文\research_results\no_merkle_bound_v1\no_merkle_bound.r1cs
+[32mWritten successfully:[0m C:\Users\Ender\Desktop\Class Data\畢業論文\research_results\no_merkle_bound_v1\no_merkle_bound.sym
+[32mWritten successfully:[0m C:\Users\Ender\Desktop\Class Data\畢業論文\research_results\no_merkle_bound_v1\no_merkle_bound_js\no_merkle_bound.wasm
+[32mEverything went okay[0m

@@ -1,0 +1,389 @@
+{
+  "environment": {
+    "status": "completed",
+    "started_utc": "2026-09-11T04:10:45.542878+00:00",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "optimization": "O1",
+    "requested_depths": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "setup_requested": true,
+    "functional_tests_requested": true,
+    "circuit_schema": "merkle-private-packet-binding-v1",
+    "merkle_public_signals": [
+      "binding",
+      "root",
+      "voteHash"
+    ],
+    "packages": {
+      "snarkjs": "0.7.6",
+      "circomlib": "2.0.5",
+      "circomlibjs": "0.1.7"
+    },
+    "source_sha256": {
+      "build_circuit.py": "7659726c7792d9ff182603662afe684147bd2bcd5a7f3322d3d0b24c05c4e1c1",
+      "no_merkle_bound.circom": "85ef5e87c0694bca7bc32c28556e05514dd9403910c8a9fcaab4a4c15c26b93c",
+      "zk_merkle.py": "6b98a90a7bb69e3d8664929444d2536893923b348d5d528a344a5af4d49776e7",
+      "test_merkle_binding.py": "fcf9d5fb1bbf85027b36b5ebf8bed855b17fb8b90bb7b744dcbc68e4ddb082bf",
+      "package-lock.json": "9b80b16630bbe874d00291f099ae0de08d292c788da2551f9f0e7aa8ab7e7641"
+    },
+    "circom": "circom compiler 2.2.3",
+    "node": "v24.19.0",
+    "circomlib_circuits_sha256": "f0384ee3f57a2271ad97f5df1860ddd8902e09ae9342187ddf597dcd4e063663",
+    "functional_tests_passed": true
+  },
+  "results": [
+    {
+      "circuit": "merkle_d1",
+      "depth": 1,
+      "nonlinear": 733,
+      "linear": 822,
+      "total": 1555,
+      "wires": 1559,
+      "source_sha256": "1c0237147c427f195fe755ba74ed4a581006b0c936f11dfc1bcaaf29ad9081d4",
+      "r1cs_sha256": "57dd6afa4dcd8557556aa6e4abc8ae8567646645d5175d253c6f7546f1349ef2",
+      "wasm_bytes": 1755263,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 4,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "ed7426f000e2e2e7486918c608f9bf738af650a0ed8e21fa9b8a8b018d29ab83",
+      "vkey_sha256": "37f2199536d542f25fb97d0f81346bcf0225b136bb991ba0d4297c840c85889c"
+    },
+    {
+      "circuit": "merkle_d2",
+      "depth": 2,
+      "nonlinear": 980,
+      "linear": 1096,
+      "total": 2076,
+      "wires": 2080,
+      "source_sha256": "c1f5d15cccc4e409d983bab66c18eb554ab560889910912934bd0739635f8b45",
+      "r1cs_sha256": "91d01c3fc339f05e9b30554e6ab9bab9d74a871cce5350ec8c9d62a897748684",
+      "wasm_bytes": 1758621,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 6,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "e0e8420fe88bd8c9c8cf9bd06b2d4272a6166b958c3a402d45eb578791cffbb3",
+      "vkey_sha256": "7c2ed6789f8f3a9a440ec91a03d183cc268d325de3b00a54a874006a264d9f1e"
+    },
+    {
+      "circuit": "merkle_d3",
+      "depth": 3,
+      "nonlinear": 1227,
+      "linear": 1370,
+      "total": 2597,
+      "wires": 2601,
+      "source_sha256": "ff470df6ecdd3cd2968ecb2009ec2617a8058a4933ba7a17788509a2847eada0",
+      "r1cs_sha256": "90532d1cc1bdc86059c1b747d380180525cc1dcb08e2177572e00dec0c165641",
+      "wasm_bytes": 1761384,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 8,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "4a97020b6be7553521475af308417897e7e57eb40b50edbdc022091c88aef5ca",
+      "vkey_sha256": "cf72d4c383e2f7b9c5293c52f10fce39c33659821fdb6552b21087efdcc38df8"
+    },
+    {
+      "circuit": "merkle_d4",
+      "depth": 4,
+      "nonlinear": 1474,
+      "linear": 1644,
+      "total": 3118,
+      "wires": 3122,
+      "source_sha256": "9cdc81640c958a21fcc64fb871e3ce9bcf3a179e4265ba0157286a43a47e6eee",
+      "r1cs_sha256": "9cd05f21dd4f59d6471ea6d8958b5bfcf84cd69426209fe4e05fbdca816c3f2e",
+      "wasm_bytes": 1764358,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 10,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "cc6c0ff9d0fbb5c4079107244dc4fbbbeb9cf37fe29fba15cfe5ade0d1c113b7",
+      "vkey_sha256": "b6a4421f5dc737753ea42c5cc0fbfada79152784266e7f2cbe4e71f61557f61e"
+    },
+    {
+      "circuit": "merkle_d5",
+      "depth": 5,
+      "nonlinear": 1721,
+      "linear": 1918,
+      "total": 3639,
+      "wires": 3643,
+      "source_sha256": "6f35e2e723edade044fa7bfa9184d45f9ec7941b01510dcb70857e4e978d4e85",
+      "r1cs_sha256": "c04f0ad1ae4151127b65e4eb29e932f5d3445ac48448a88ee96951c9d04787c4",
+      "wasm_bytes": 1767402,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 12,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "6b29e8d63c9046bd9ee709fa999dea5f8998d3c50791d57dffee58da3aa5328d",
+      "vkey_sha256": "02351a197f7a07f771cec636d44efb9ae6d730839e5366d3f50435062c45105d"
+    },
+    {
+      "circuit": "merkle_d6",
+      "depth": 6,
+      "nonlinear": 1968,
+      "linear": 2192,
+      "total": 4160,
+      "wires": 4164,
+      "source_sha256": "0b54b5da37a10570fbbc9fdb7f5e8dab7aeb87e952f625a581c330a76b907f3d",
+      "r1cs_sha256": "86f989911ab5e9e53be9efd7614a5fccf36c8c4b6da50ffd1700d70ba1bf39ff",
+      "wasm_bytes": 1770299,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 14,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "c2a0d381c731c728969dec3e1bdf5ae1aa011b2deb5b474f4163ea947fb3f59a",
+      "vkey_sha256": "669910ff29cfeeadfb7b5c878780a3a6f596abc74f7c06e54f169d61e416bc6d"
+    },
+    {
+      "circuit": "merkle_d7",
+      "depth": 7,
+      "nonlinear": 2215,
+      "linear": 2466,
+      "total": 4681,
+      "wires": 4685,
+      "source_sha256": "6df13a9064343d79e44f291c981486976cfa43a286cb1c918da652a5beacddeb",
+      "r1cs_sha256": "3a3de6675b2b0dc5b5fd86da500124c98f19b9547da66ed787a6b8e00b1877b1",
+      "wasm_bytes": 1773273,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 16,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "912f82cf85cf92642881ec1fe4b3a25f726f5641f52f6b9efe39741d9a84e4dd",
+      "vkey_sha256": "0acbc7d555429f7f9370251bcff71c34994cb3febb7fddc4a62a175b9a765970"
+    },
+    {
+      "circuit": "merkle_d8",
+      "depth": 8,
+      "nonlinear": 2462,
+      "linear": 2740,
+      "total": 5202,
+      "wires": 5206,
+      "source_sha256": "eb445f2e659bf0f41c603a6176714b060b1e14e81b4f9b05627785c0fc12cc5f",
+      "r1cs_sha256": "2b8ae63dba3d934394f50e7780a35fcbd8160dee633afbcdc542c141223901fd",
+      "wasm_bytes": 1776326,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 18,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "b646f22b9406b471f9ab7964ca5b233b9f9131533ad5d13a803543b8e3891fb7",
+      "vkey_sha256": "b913a69dbb7f715e2840bb29860c78ad3243789e5fc1a771fdf50c2b96818ebf"
+    },
+    {
+      "circuit": "merkle_d9",
+      "depth": 9,
+      "nonlinear": 2709,
+      "linear": 3014,
+      "total": 5723,
+      "wires": 5727,
+      "source_sha256": "d4c677b21022ef482a0861a99fa5861e685b53a871e4a78fd52e13bdd1592615",
+      "r1cs_sha256": "83690973c1823619401f487f7cbdf3c1ce9d654840a851cdfae206b927c3b1d5",
+      "wasm_bytes": 1779300,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 20,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "3338ab98edcbf6f57970f5821fb3c97eb8efa6b52612d3f411c5b3a8487a1fa1",
+      "vkey_sha256": "6b93e15175123094bfaa995f4b20541a820e4807af24bc82d129f52dc980c096"
+    },
+    {
+      "circuit": "merkle_d10",
+      "depth": 10,
+      "nonlinear": 2956,
+      "linear": 3288,
+      "total": 6244,
+      "wires": 6248,
+      "source_sha256": "778f484d80e048b3023c04119b22471f014cafc9d934ea32eb9a8b29ed1055a3",
+      "r1cs_sha256": "933f16b5bf0c93b4d0a3846f729e71874db1dc7f6a842d1e72c09c017eb9032d",
+      "wasm_bytes": 1782083,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 22,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "3e0d742ca585649bc11ba9541b8b4bb6e12ee916f4089538c20cb589553b8c34",
+      "vkey_sha256": "95ee23f6d0c39b424a3c6a42edf3bbf2b5017ca61674dcfb47c7f199f29152e3"
+    },
+    {
+      "circuit": "merkle_d11",
+      "depth": 11,
+      "nonlinear": 3203,
+      "linear": 3562,
+      "total": 6765,
+      "wires": 6769,
+      "source_sha256": "196b50b2aacda65b5832e33b58964b89f0613b67c8c7167ef832c5c903808fc5",
+      "r1cs_sha256": "194a867ac74f4b991e30128c82717a7ff441eeb44188ec784e129707d7feb5bf",
+      "wasm_bytes": 1785057,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 24,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "efb21d7da3e65ad18bce1f60590c72b75ccbf0079a9231816418007aff81d4c5",
+      "vkey_sha256": "4af61c589553e22b41e311a209e06c95be0512cd6cb98565e48d73b3f57c08b9"
+    },
+    {
+      "circuit": "merkle_d12",
+      "depth": 12,
+      "nonlinear": 3450,
+      "linear": 3836,
+      "total": 7286,
+      "wires": 7290,
+      "source_sha256": "db0415348950a861f797886c0fd3f60cf6ee710c973b7b2c9a37a5ec4ec23f02",
+      "r1cs_sha256": "5ae8e789d576f971cf4aa8364b7993d2e4734349ea1dc429ab942f825a057c8c",
+      "wasm_bytes": 1787880,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 26,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "5efd2393ef269bde6fa7cb5fc80ba3dd1cb4beaa3e4e1653ac53166f91c8e7e5",
+      "vkey_sha256": "667c8319eadc28c67f934572ceb402addc41bba2c734ac6e332343bb5ec8b753"
+    },
+    {
+      "circuit": "merkle_d13",
+      "depth": 13,
+      "nonlinear": 3697,
+      "linear": 4110,
+      "total": 7807,
+      "wires": 7811,
+      "source_sha256": "457fb6fec4a3f8428f3f9f3a6282785d914b9d74b5e5966b8a62f547606f0f3b",
+      "r1cs_sha256": "5c2401654194825fc443eabd76987852eb40a2fdc11240db90d011ccfc685be5",
+      "wasm_bytes": 1790849,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 28,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "5dc7822808dd4850f01775fec18263812337148b2399e95442d7cde0fe8c2743",
+      "vkey_sha256": "567737569fc845147e6ea283485308275299a9bc30064b8db6f82cd179ba9ea1"
+    },
+    {
+      "circuit": "merkle_d14",
+      "depth": 14,
+      "nonlinear": 3944,
+      "linear": 4384,
+      "total": 8328,
+      "wires": 8332,
+      "source_sha256": "746a131f0031e20a0ee5ed66c2ebba289830b76c112e02dec13bb1054e747cbe",
+      "r1cs_sha256": "60af7c184d1cda0274ca391eb9ab557a91447e69cb3b46a163688e56fdd72088",
+      "wasm_bytes": 1793901,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 30,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "c061190d8f33067ab44b6d26d5a64be5f6fdb13668f568edec60ad5321f5eb5f",
+      "vkey_sha256": "6eb08f87fcf369ae663f229e0cc5289e016bea913789db18d331e7d8b43de9f5"
+    },
+    {
+      "circuit": "merkle_d15",
+      "depth": 15,
+      "nonlinear": 4191,
+      "linear": 4658,
+      "total": 8849,
+      "wires": 8853,
+      "source_sha256": "fba80dd06dffefcf98fde6d5d7472bbb016d487d9a9f276aab535462a3f189be",
+      "r1cs_sha256": "213242ca0c5cfd8e337bb5f1d5bc5315e1db6805f94d8a9928b879b450650758",
+      "wasm_bytes": 1796937,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 32,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "fc2df9c6bd44b0aeccd2eab14d6c7cab42fae328261919d2ce9e0dba6fb6ec6c",
+      "vkey_sha256": "c28a2d988c3a36e6ca6ce76095343cc548d1e0a79d6078ea29fa73eda486d7d2"
+    },
+    {
+      "circuit": "merkle_d16",
+      "depth": 16,
+      "nonlinear": 4438,
+      "linear": 4932,
+      "total": 9370,
+      "wires": 9374,
+      "source_sha256": "fe3628c0c71c0627ea66eafd899b956857463129fc1a08bed90d86591ed92c8e",
+      "r1cs_sha256": "637c4837b433ee2bd38f68d2a13714e8b25a3fd711bce604ddbbe8782d3f0a92",
+      "wasm_bytes": 1799675,
+      "public_inputs": 2,
+      "public_outputs": 1,
+      "private_inputs": 34,
+      "public_signal_order": [
+        "binding",
+        "root",
+        "voteHash"
+      ],
+      "zkey_sha256": "53278838e7d30bc6b67a53fd0583882f3909c8e3ddc3dc0e9317b7d43dfcdb6f",
+      "vkey_sha256": "9bbe7f1407e61feacff88d24b87344ac7d559b24828d6f9bf6e39653a8aa0583"
+    }
+  ]
+}
